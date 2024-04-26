@@ -1,4 +1,6 @@
-** Auto Chess **
+# Auto Chess #
+
+## Project Setup ##
 
 Clone GitHub using
 
@@ -6,9 +8,12 @@ Clone GitHub using
 
 `electrical_code` contains all hardware related code while `chess_code` contains the Python game AI code.
 
+## Project Description ##
+
 Project purpose is to create a robot that can sense player movement and play chess autonomously.
 
-*** To Do List ***
+## To Do List ##
+
 - Game AI
 - Motor movement
 - Sensors
@@ -17,7 +22,8 @@ Project purpose is to create a robot that can sense player movement and play che
 - Integrate hardware & software
 
 
-*** Contributors ***
+## Contributors ##
+
 Abhinav Pothuri - Software
 Terrence Han - Engineer
 Richard Feng (hopefully) - Hardware & Engineer
