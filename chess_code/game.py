@@ -1,8 +1,6 @@
 import chess
+import chess.polyglot
 from render import render
-
-# initialize board
-board = chess.Board()
 
 # piece position tables (derived from chess theory)
 piece_tables = {
@@ -68,8 +66,7 @@ piece_tables = {
 }
 
 
-def eval():
-
+def eval(board):
     # edge cases (i.e. checkmate, draw, etc.)
     if board.is_checkmate():
         if board.turn:
@@ -117,7 +114,70 @@ def eval():
     else:
         return -total_score
 
+def minimax(board_state, depth, alpha, beta, whites_turn):
+    if depth == 0 or board_state.is_game_over():
+        return eval(board_state), None
 
-print("current score: ", eval())
+    if whites_turn:
+        max_eval = -10000
+        best_move = None
+        for move in board_state.legal_moves:
+            new_board_state = board_state.copy()
+            new_board_state.push(move)
+
+            curr_eval = minimax(new_board_state, depth - 1, alpha, beta, not whites_turn)[0]
+            if curr_eval > max_eval:
+                max_eval = curr_eval
+                best_move = move
+
+            alpha = max_eval
+            if beta <= alpha:
+                break
+
+        return max_eval, best_move
+
+    else:
+        min_eval = 10000
+        best_move = None
+        for move in board_state.legal_moves:
+            new_board_state = board_state.copy()
+            new_board_state.push(move)
+
+            curr_eval = minimax(new_board_state, depth - 1, alpha, beta, not whites_turn)[0]
+            if curr_eval < min_eval:
+                min_eval = curr_eval
+                best_move = move
+
+            beta = min_eval
+            if beta <= alpha:
+                break
+
+        return min_eval, best_move
+
+def getNextMove(depth):
+    try:
+        move = chess.polyglot.MemoryMappedReader("./training_files/human.bin").weighted_choice(board).move
+        return move
+    except:
+        return minimax(board, depth, -10000, 10000, True)[1]
+
+
+## testing
+
+# initialize board
+board = chess.Board()
+
+DEPTH = 3
+for i in range(0, 50):
+    render(board)
+    best_move = getNextMove(DEPTH)
+    if best_move is None:
+        break
+    print("best move: ", best_move)
+    print(eval(board))
+    board.push(best_move)
+
+
+print("current score: ", eval(board))
 
 render(board)
