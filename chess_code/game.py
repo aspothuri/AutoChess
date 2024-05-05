@@ -107,7 +107,7 @@ def eval(board):
             else:
                 strategy_score -= piece_tables[piece_type][(7-file) + (7-rank) * 8]
 
-    total_score = material_score + strategy_score
+    total_score = (material_score + strategy_score) * -1
 
     if board.turn:
         return total_score
@@ -162,16 +162,18 @@ def getNextMove(depth):
         return minimax(board, depth, -10000, 10000, True)[1]
 
 
-## testing
+# testing
 
 # initialize board
 board = chess.Board()
 
 DEPTH = 3
-for i in range(0, 50):
+NUM_MOVES = 50
+for i in range(0, NUM_MOVES):
     render(board)
     best_move = getNextMove(DEPTH)
     if best_move is None:
+        print("Finished Execution")
         break
     print("best move: ", best_move)
     print(eval(board))

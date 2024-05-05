@@ -27,4 +27,4 @@ Abhinav Pothuri - Software
 
 Terrence Han - Engineer
 
-Richard Feng (hopefully) - Hardware & Engineer
+Richard Feng - Hardware & Engineer
