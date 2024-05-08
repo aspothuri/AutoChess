@@ -154,7 +154,7 @@ def minimax(board_state, depth, alpha, beta, whites_turn):
 
         return min_eval, best_move
 
-def getNextMove(depth):
+def getNextMove(board, depth):
     try:
         move = chess.polyglot.MemoryMappedReader("./training_files/human.bin").weighted_choice(board).move
         return move
@@ -171,7 +171,7 @@ DEPTH = 3
 NUM_MOVES = 50
 for i in range(0, NUM_MOVES):
     render(board)
-    best_move = getNextMove(DEPTH)
+    best_move = getNextMove(board, DEPTH)
     if best_move is None:
         print("Finished Execution")
         break
