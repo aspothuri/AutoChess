@@ -3,7 +3,10 @@
 
 Servo servo1;
 
-int SERVO1_PIN_NUMBER = 9; // replace with servo1 pin number on arduino
+const int SERVO1_PIN_NUMBER = 9; // replace with servo1 pin number on arduino
+const int MIC_PIN_NUMBER = 4;
+
+int micValue = 0;
 
 float CURR_X = 0;
 float CURR_Y = 0;
@@ -35,6 +38,10 @@ void loop()
     // use sensors to check for player moves
     // move piece if necessary
     // tap server to determine both of these things
+
+    micValue = analogRead(micPin);
+    delay(1);
+    //reads in mic input
 }
 
 // move a piece from one coordinate to another
@@ -145,9 +152,11 @@ void toggleMagnet()
 // move from currX and currY to x,y
 void moveSlider(int x, int y)
 {
+
 }
 
 // move slowly from currX and currY to x,y
 void moveSliderSlow(float x, float y)
 {
+
 }
