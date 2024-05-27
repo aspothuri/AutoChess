@@ -94,20 +94,14 @@ def eval(board):
 
     # strategic score calculation
     strategy_score = 0
-    for square in chess.SQUARES:
-        piece = board.piece_at(square)
-        if piece is not None:
-            file = chess.square_file(square)
-            rank = chess.square_rank(square)
-            piece_type = piece.symbol().lower()
-            piece_color = piece.color
+    for square, piece in board.piece_map().items():
+        piece_type = piece.symbol().lower()
+        if piece.color == chess.WHITE:
+            strategy_score += piece_tables[piece_type][square]
+        else:
+            strategy_score -= piece_tables[piece_type][chess.square_mirror(square)]
 
-            if piece_color == chess.WHITE:
-                strategy_score += piece_tables[piece_type][file + rank * 8]
-            else:
-                strategy_score -= piece_tables[piece_type][(7-file) + (7-rank) * 8]
-
-    total_score = (material_score + strategy_score) * -1
+    total_score = (material_score + strategy_score)
 
     if board.turn:
         return total_score
@@ -125,12 +119,12 @@ def minimax(board_state, depth, alpha, beta, whites_turn):
             new_board_state = board_state.copy()
             new_board_state.push(move)
 
-            curr_eval = minimax(new_board_state, depth - 1, alpha, beta, not whites_turn)[0]
+            curr_eval, _ = minimax(new_board_state, depth - 1, alpha, beta, not whites_turn)
             if curr_eval > max_eval:
                 max_eval = curr_eval
                 best_move = move
 
-            alpha = max_eval
+            alpha = max(alpha, curr_eval)
             if beta <= alpha:
                 break
 
@@ -143,43 +137,28 @@ def minimax(board_state, depth, alpha, beta, whites_turn):
             new_board_state = board_state.copy()
             new_board_state.push(move)
 
-            curr_eval = minimax(new_board_state, depth - 1, alpha, beta, not whites_turn)[0]
+            curr_eval, _ = minimax(new_board_state, depth - 1, alpha, beta, not whites_turn)
             if curr_eval < min_eval:
                 min_eval = curr_eval
                 best_move = move
 
-            beta = min_eval
+            beta = min(beta, curr_eval)
             if beta <= alpha:
                 break
 
         return min_eval, best_move
 
+
 def getNextMove(board, depth):
     try:
         move = chess.polyglot.MemoryMappedReader("./training_files/human.bin").weighted_choice(board).move
         return move
-    except:
-        return minimax(board, depth, -10000, 10000, True)[1]
+    except Exception as e:
+        return minimax(board, depth, -10000, 10000, False)[1]
 
 
-# testing
-
-# initialize board
-board = chess.Board()
-
-DEPTH = 3
-NUM_MOVES = 50
-for i in range(0, NUM_MOVES):
-    render(board)
-    best_move = getNextMove(board, DEPTH)
-    if best_move is None:
-        print("Finished Execution")
-        break
-    print("best move: ", best_move)
-    print(eval(board))
-    board.push(best_move)
 
 
-print("current score: ", eval(board))
+# print("current score: ", eval(board))
 
-render(board)
+# render(board)

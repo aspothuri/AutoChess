@@ -1,0 +1,78 @@
+<!-- Outdated -  IGNORE -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chess Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/css/chessboard-1.0.0.min.css">
+    <style>
+        #board {
+            width: 400px;
+            margin: 20px auto;
+        }
+        #controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="board"></div>
+    <div id="controls">
+        <button id="next-move">Next Move</button>
+        <button id="reset-board">Reset Board</button>
+    </div>
+
+    <!-- Load jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Load Chess.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <!-- Load Chessboard.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.js"></script>
+    
+    <script>
+        var board = null;
+        var game = new Chess();
+
+        function updateBoard(fen) {
+            game.load(fen);
+            board.position(fen);
+        }
+
+        $(document).ready(function() {
+            board = Chessboard('board', {
+                draggable: true,
+                position: '{{ board }}',
+                onDrop: function(source, target) {
+                    var move = game.move({
+                        from: source,
+                        to: target,
+                        promotion: 'q'
+                    });
+
+                    if (move === null) return 'snapback';
+
+                    updateBoard(game.fen());
+                }
+            });
+
+            $('#next-move').on('click', function() {
+                $.getJSON('/get_move', function(data) {
+                    if (data.move === 'Finished Execution') {
+                        alert('Game over');
+                    } else {
+                        updateBoard(data.board);
+                    }
+                });
+            });
+
+            $('#reset-board').on('click', function() {
+                $.getJSON('/reset_board', function(data) {
+                    updateBoard(data.board);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
